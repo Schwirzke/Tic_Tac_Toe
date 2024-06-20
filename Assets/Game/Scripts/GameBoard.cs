@@ -36,17 +36,9 @@ public class GameBoard : MonoBehaviour
 
     void Update()
     {
-       // Debug.LogError("ALLOW input is " + _allowInput);
         if (_allowInput)
         {
-            if (_playerOneIsActive && _playerOneIsAI)
-            {
-                if (_playerOneIsAI)
-                {
-                    DoAIMove();
-                }
-            }
-            else if (!_playerOneIsActive && _playerTwoIsAI)
+            if (_playerOneIsActive && _playerOneIsAI || !_playerOneIsActive && _playerTwoIsAI)
             {
                 DoAIMove();
             }
@@ -86,10 +78,21 @@ public class GameBoard : MonoBehaviour
 
         if (CheckForWin())
         {
-            gameController.ShowReturnPanel();
             _allowInput = false;
+
+            StartCoroutine(EndGameWithDelay());
         }
     }
+
+    // player gets a chance to see last move before return screen dims it
+    IEnumerator EndGameWithDelay()
+    {
+        UpdateGameTurnText(winnerText.text);
+
+        yield return new WaitForSeconds(3.0f);
+        gameController.ShowReturnPanel();
+    }
+
 
     void DoAIMove()
     {
